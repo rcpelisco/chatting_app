@@ -1,0 +1,85 @@
+
+.header {
+    padding: .7rem 1rem .25rem 1rem;
+}
+
+.available-contacts {
+    height: 50vh;
+}
+
+.contacts {
+    height: 90vh;
+    padding-right: 0;
+}
+
+.scrollable {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.content-container {
+    height: 90vh;
+    padding-right: 0;
+    padding-left: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
+}
+
+.message-box {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: block;
+}
+
+.shared-content {
+    padding: .7rem 1rem .25rem;
+    margin-bottom: 1rem;
+}
+
+.no-margin-left-right {
+    margin-left: 0;
+    margin-right: 0;
+
+}
+
+.name-bar {
+    background-color: black;
+    display: inline-block;
+}
+
+.resize {
+    width: 3rem;
+    height: 3rem;
+}
+
+.un-read {
+    font-weight: bold;
+}
+
+#message-box-input {
+    border-radius: 0;
+    border: 0;
+    margin: .5rem 0 .5rem;
+    padding-left: 1rem;
+}
+
+.card-login {
+    margin: 5rem auto;
+    width: 60vh;
+}
+
+.container-404 {
+    margin-top: 5rem;
+}
+
+.username-result {  
+    color: #919191
+}
+
+.column-reverse {
+    /* display: flex; 
+    flex-direction: column-reverse;  */
+}

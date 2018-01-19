@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="">
+    <div class="row">
+        <div class="col-sm-3 header border border-secondary border-top-0">
+            <h5 class="text-center">Messenger</h5>
+        </div>
+        <div class="col-6 header border border-secondary border-top-0 border-left-0">
+            <h5 class="text-center">{{ active_contact.name }}</h5>
+        </div>
+        <div class="col-3 header border border-secondary border-top-0 border-left-0  d-flex justify-content-between align-items-center">
+            <h5 class="">{{ user.first_name }}</h5>
+            <div>
+                <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#search_friends_modal">Add Contact</button>
+                <button id="logout-btn" class="btn btn-sm btn-primary">Logout</button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="list-group col-3 contacts scrollable border border-secondary border-top-0">
+            {% for contact in contacts %}
+            <a href="/messages/{{contact.username}}" class="list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                    <p class="mb-1 lead {{ contact.status }}">{{ contact.contact_name }}</p>
+                    <!-- <small class="{{ contact.status }}">{{ contact.time_last_message }}</small> -->
+                </div>
+                <!-- <small class="mb-1 {{ contact.status }}">{{ contact.last_message }}</small> -->
+            </a>
+            {% endfor %}
+        </div>
+        <div class="col-9">
+            <div class="row">
+                <div class="col-8 content-container border border-secondary border-top-0 border-left-0">
+                    <div class="thread">
+                        {% for message in messages %}
+                            <p><strong>{{ message.sender }}: </strong>{{ message.message }}</p>
+                        {% endfor %}
+                    </div>
+                    <div class="message-box border border-secondary border-left-0 border-right-0 border-bottom-0">
+                        <div class="input-group">
+                            <form action="" id="message-form" >
+                                <span class="input-group-btn">
+                                <input id="message-box-input" type="text" class="form-control" 
+                                    placeholder="Type a message ...">
+                                <input id="message-box-recipient" type="hidden" class="form-control" 
+                                    value="{{ active_contact.username }}">
+                                <input id="message-box-sender" type="hidden" class="form-control" 
+                                    value="{{ user.username }}">
+                                    <input type="submit" class="btn btn-primary" id="send_button" value="Send">
+                                </span>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 content-container">
+                    <div class="">
+                        <h5 class="mb-1 shared-content">Shared Files</h5>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                vid_000.zip
+                                <button type="button" class="btn btn-primary btn-sm">Download</button>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                vid_001.zip
+                                <button type="button" class="btn btn-primary btn-sm">Download</button>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                vid_002.zip
+                                <button type="button" class="btn btn-primary btn-sm">Download</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'modals/search_friends.html' %}
+
+{% endblock %}
