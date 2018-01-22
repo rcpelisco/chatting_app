@@ -50,6 +50,12 @@
                                     <input type="submit" class="btn btn-primary" id="send_button" value="Send">
                                 </span>
                             </form>
+                            <form action="/server/upload" method="POST" id="file-form" enctype="multipart/form-data">
+                                <input type="file" name="fileInput" id="file-input">
+                                <input id="message-box-recipient" type="hidden" class="form-control" 
+                                    value="{{ active_contact.username }}" name="recipient">
+                                <input type="submit"  class="btn btn-primary" id="send_file_button" value="Send">
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -57,18 +63,12 @@
                     <div class="">
                         <h5 class="mb-1 shared-content">Shared Files</h5>
                         <ul class="list-group">
+                            {% for file in files_shared %}
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                vid_000.zip
+                                {{ file.file_name }}
                                 <button type="button" class="btn btn-primary btn-sm">Download</button>
                             </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                vid_001.zip
-                                <button type="button" class="btn btn-primary btn-sm">Download</button>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                vid_002.zip
-                                <button type="button" class="btn btn-primary btn-sm">Download</button>
-                            </li>
+                            {% endfor %}
                         </ul>
                     </div>
                 </div>

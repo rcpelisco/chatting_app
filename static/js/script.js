@@ -6,6 +6,8 @@ $(function() {
     let messageBox = $('#message-box-input')
     let recipientBox = $('#message-box-recipient')
     let senderBox = $('#message-box-sender')
+    let fileForm = $('#file-form')
+    let fileInput = $('#file-input')
 
     socket.on('connect', function() {
         if(senderBox.val() === undefined) return
@@ -65,6 +67,11 @@ $(function() {
         })
         $('.thread').append('<p><strong>' + sender + ': </strong>' + message + '</p>')
     })
+
+    // fileForm.submit(function(e) {
+    //     e.preventDefault()
+    //     socket.emit('new file', fileInput.val())
+    // })
 
     function search_user(query) {
         $.ajax({

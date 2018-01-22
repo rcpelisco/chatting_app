@@ -94,4 +94,34 @@ class DatabaseManager:
         messages = list(cur.fetchall()) 
         return messages
 
+    def save_file(mysql, file_name, path, sender, recipient):
+        cur = mysql.connection.cursor()
+        other_contact = DatabaseManager.get_user_id(mysql, recipient)
+        sql_query = '''INSERT INTO files (file_name, file_path, sender_id, recipient_id) 
+            SELECT %s, concat(%s, %s, '-', MAX(file_id) + 1, '.', %s), %s, %s FROM files'''
+        cur.execute(sql_query, ['.'.join([file_name['filename'], file_name['file_ext']]), 
+            path, file_name['filename'], file_name['file_ext'], sender, other_contact])
+        mysql.connection.commit()
+        sql_query = '''SELECT LAST_INSERT_ID() as id FROM files LIMIT 1'''
+        cur.execute(sql_query)
+        id = list(cur.fetchall())
+        return str(id[0]['id'])
 
+    def get_files(mysql, user_id, username):
+        cur = mysql.connection.cursor()
+        other_contact = DatabaseManager.get_user_id(mysql, username)
+        sql_query = '''SELECT file_id, file_name, created_on, 
+            (SELECT username FROM users WHERE user_id = sender_id) as sender, 
+            (SELECT username FROM users WHERE user_id = recipient_id) as recipient FROM files 
+            WHERE (sender_id = %s AND recipient_id = %s) OR
+            (recipient_id = %s AND sender_id = %s) ORDER BY created_on'''
+        cur.execute(sql_query, [user_id, other_contact, user_id, other_contact])
+        files = list(cur.fetchall())
+        return files
+
+    def get_file(mysql, file_id):
+        cur = cur = mysql.connection.cursor()
+        sql_query = '''SELECT file_id FROM files WHERE id = %s'''
+        cur.execute(sql_query, [file_id])
+        new_file = list(cur.fetchall())
+        return new_file[0]

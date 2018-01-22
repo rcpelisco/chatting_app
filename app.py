@@ -2,7 +2,7 @@ from flask import Flask , session, render_template, request, redirect, g, url_fo
 from flask_mysqldb import MySQL
 from flask_socketio import SocketIO, emit
 from DatabaseManager import *
-import json
+import json, os
 
 app = Flask(__name__)
 
@@ -16,9 +16,11 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 socketio = SocketIO(app)
 
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+
 dummy_contacts = [
     {
-        'contact_name': 'RC', 
+        'contact_name': 'Jane', 
         'time_last_message': 
         '1 min', 'last_message': 'I was down. My dreams were wearing thin ...', 
         'is_active': 'active'
@@ -57,6 +59,8 @@ def messages(username=None):
             files_shared='')
     active_contact = DatabaseManager.get_user(mysql, username)
     messages = DatabaseManager.get_messages(mysql, g.user['user_id'], username)
+    files = DatabaseManager.get_files(mysql, g.user['user_id'], username)
+    print(files)
     return render_template('index.html', 
         title='Message',
         contacts=contacts,
@@ -64,7 +68,7 @@ def messages(username=None):
         active_contact={'name': active_contact['first_name'] + ' ' + active_contact['last_name'], 
             'username': username},
         messages=messages,
-        files_shared='')
+        files_shared=files)
 
 @app.route('/')
 def index():
@@ -113,6 +117,43 @@ def server_add_contact():
     DatabaseManager.add_contact(mysql, g.user['user_id'], username)
     return "0"
 
+@app.route('/server/upload', methods=['POST'])
+def server_upload():
+    relative_path = 'static\\shared_files\\'
+    target = os.path.join(APP_ROOT, relative_path)
+
+    sent_file = request.files['fileInput']
+    sender = g.user['user_id']
+    recipient = request.form['recipient']
+    if(sent_file != ''):
+        new_filename = convert_file_name(sent_file.filename)
+        last_id = DatabaseManager.save_file(
+            mysql, 
+            new_filename, 
+            relative_path,
+            sender,
+            recipient
+        )
+        destination = '{}{}-{}.{}'.format(
+            target, 
+            new_filename['filename'], 
+            last_id, 
+            new_filename['file_ext']
+        )
+        sent_file.save(destination)
+        
+    return redirect('./messages/{}'.format(recipient))
+
+def convert_file_name(filename):
+    split_filename = filename.split('.')
+    new_filename = {'filename': split_filename[0], 'file_ext': split_filename[1]}
+    return new_filename
+
+
+@app.route('/server/download')
+def server_download():
+    file_data = DatabaseManager.get_file(mysql, file_id)
+
 @socketio.on('new message')
 def handle_message(msg):
     print(msg)
@@ -150,7 +191,7 @@ def remove_user(d, key):
     r = dict(d)
     print(r)
     del r[key]
-    return r    
+    return r
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
