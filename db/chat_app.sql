@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 19, 2018 at 09:35 AM
+-- Generation Time: Jan 22, 2018 at 11:38 AM
 -- Server version: 10.1.16-MariaDB
 -- PHP Version: 7.1.13
 
@@ -29,11 +29,21 @@ SET time_zone = "+00:00";
 CREATE TABLE `files` (
   `file_id` int(11) NOT NULL,
   `file_name` varchar(50) NOT NULL,
-  `file_data` blob NOT NULL,
+  `file_path` text NOT NULL,
   `sender_id` int(11) NOT NULL,
   `recipient_id` int(11) NOT NULL,
   `created_on` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `files`
+--
+
+INSERT INTO `files` (`file_id`, `file_name`, `file_path`, `sender_id`, `recipient_id`, `created_on`) VALUES
+(3, 'terms_of_use_by_hawksmont.txt', 'terms_of_use_by_hawksmont-3.txt', 1, 2, '2018-01-22 16:39:59'),
+(4, 'mysql-connector-java-5.1', 'mysql-connector-java-5-4.1', 1, 2, '2018-01-22 18:18:36'),
+(5, 'euphoria-script.zip', 'euphoria-script-5.zip', 1, 2, '2018-01-22 18:19:00'),
+(6, 'bars.png', 'bars-6.png', 1, 2, '2018-01-22 18:35:02');
 
 -- --------------------------------------------------------
 
@@ -105,7 +115,12 @@ INSERT INTO `messages` (`message_id`, `message`, `sender_id`, `recipient_id`, `c
 (58, 'What the fuck', 1001, 1, '2018-01-19 01:30:17'),
 (59, 'Naguba na akong UI', 1001, 1, '2018-01-19 01:30:20'),
 (60, 'Hohoho', 1, 2, '2018-01-19 06:48:52'),
-(61, 'hahahaha', 2, 1, '2018-01-19 06:48:55');
+(61, 'hahahaha', 2, 1, '2018-01-19 06:48:55'),
+(62, 'hohoho', 2, 1, '2018-01-19 09:45:31'),
+(63, 'Hoy komo', 1, 175, '2018-01-22 08:19:50'),
+(64, 'kaku ka ba?', 1, 175, '2018-01-22 08:19:55'),
+(65, 'Tangna mo', 1, 175, '2018-01-22 08:20:01'),
+(66, 'wtf', 1, 175, '2018-01-22 08:20:03');
 
 -- --------------------------------------------------------
 
@@ -1176,7 +1191,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `files`
 --
 ALTER TABLE `files`
-  MODIFY `file_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `file_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `friends_list`
 --
@@ -1186,7 +1201,7 @@ ALTER TABLE `friends_list`
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `message_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `message_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
 --
 -- AUTO_INCREMENT for table `users`
 --
