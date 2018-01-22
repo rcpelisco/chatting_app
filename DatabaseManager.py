@@ -94,13 +94,13 @@ class DatabaseManager:
         messages = list(cur.fetchall()) 
         return messages
 
-    def save_file(mysql, file_name, path, sender, recipient):
+    def save_file(mysql, file_name, sender, recipient):
         cur = mysql.connection.cursor()
         other_contact = DatabaseManager.get_user_id(mysql, recipient)
         sql_query = '''INSERT INTO files (file_name, file_path, sender_id, recipient_id) 
-            SELECT %s, concat(%s, %s, '-', MAX(file_id) + 1, '.', %s), %s, %s FROM files'''
+            SELECT %s, concat(%s, '-', MAX(file_id) + 1, '.', %s), %s, %s FROM files'''
         cur.execute(sql_query, ['.'.join([file_name['filename'], file_name['file_ext']]), 
-            path, file_name['filename'], file_name['file_ext'], sender, other_contact])
+            file_name['filename'], file_name['file_ext'], sender, other_contact])
         mysql.connection.commit()
         sql_query = '''SELECT LAST_INSERT_ID() as id FROM files LIMIT 1'''
         cur.execute(sql_query)
@@ -121,7 +121,8 @@ class DatabaseManager:
 
     def get_file(mysql, file_id):
         cur = cur = mysql.connection.cursor()
-        sql_query = '''SELECT file_id FROM files WHERE id = %s'''
+        sql_query = '''SELECT file_name, file_path FROM files WHERE file_id = %s'''
         cur.execute(sql_query, [file_id])
         new_file = list(cur.fetchall())
+        print(new_file)
         return new_file[0]

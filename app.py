@@ -1,4 +1,4 @@
-from flask import Flask , session, render_template, request, redirect, g, url_for, jsonify
+from flask import Flask , session, render_template, request, redirect, g, url_for, jsonify, send_file
 from flask_mysqldb import MySQL
 from flask_socketio import SocketIO, emit
 from DatabaseManager import *
@@ -129,19 +129,18 @@ def server_upload():
         new_filename = convert_file_name(sent_file.filename)
         last_id = DatabaseManager.save_file(
             mysql, 
-            new_filename, 
-            relative_path,
+            new_filename,
             sender,
             recipient
         )
         destination = '{}{}-{}.{}'.format(
-            target, 
+            target,
             new_filename['filename'], 
             last_id, 
             new_filename['file_ext']
         )
         sent_file.save(destination)
-        
+
     return redirect('./messages/{}'.format(recipient))
 
 def convert_file_name(filename):
@@ -152,7 +151,12 @@ def convert_file_name(filename):
 
 @app.route('/server/download')
 def server_download():
-    file_data = DatabaseManager.get_file(mysql, file_id)
+    relative_path = 'static\\shared_files\\'
+    target = os.path.join(APP_ROOT, relative_path)
+    file_id = request.args['file_id']
+    selected_file = DatabaseManager.get_file(mysql, file_id)
+    return send_file('/'.join([target, selected_file['file_path']]), 
+        attachment_filename = selected_file['file_name'], as_attachment=True)
 
 @socketio.on('new message')
 def handle_message(msg):
