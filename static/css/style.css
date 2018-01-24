@@ -1,4 +1,8 @@
 
+body {
+    font-family: 'Open Sans', sans-serif;
+}
+
 .header {
     padding: .7rem 1rem .25rem 1rem;
 }
@@ -59,12 +63,12 @@
     font-weight: bold;
 }
 
-#message-box-input {
+/* #message-box-input {
     border-radius: 0;
     border: 0;
     margin: .5rem 0 .5rem;
     padding-left: 1rem;
-}
+} */
 
 .card-login {
     margin: 5rem auto;
@@ -79,7 +83,56 @@
     color: #919191
 }
 
-.column-reverse {
-    /* display: flex; 
-    flex-direction: column-reverse;  */
+.message {
+    list-style-type: none;
+    height: 81vh;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: visible;
+  }
+  
+  .message-bubble {
+    margin-bottom: 3px;
+    padding: 5px 10px;
+    clear: both;
+    border-radius: 10px 10px 2px 2px;
+    max-width: 350px;
+  }
+  
+  .message-bubble-recieved {
+    background: #f2f2f2;
+    color: black;
+    float: left;
+    border-bottom-right-radius: 10px;
+  }
+  
+  .message-bubble-sent {
+    background: #0066ff;
+    color: white;
+    float: right;
+    border-bottom-left-radius: 10px;
+  }
+  
+  .message-bubble-sent + .message-bubble-sent {
+    border-top-right-radius: 2px;
+  }
+  
+  .message-bubble-recieved + .message-bubble-recieved {
+    border-top-left-radius: 2px;
+  }
+  
+  .message-bubble-stop {
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+  }
+
+input[type="file"] {
+    display: none;
+}
+
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
 }

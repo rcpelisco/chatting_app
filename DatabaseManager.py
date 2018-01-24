@@ -85,7 +85,7 @@ class DatabaseManager:
     def get_messages(mysql, user_id, username):
         cur = mysql.connection.cursor()
         other_contact = DatabaseManager.get_user_id(mysql, username)
-        sql_query = '''SELECT message, created_on, 
+        sql_query = '''SELECT message, created_on, sender_id,
             (SELECT username FROM users WHERE user_id = sender_id) as sender, 
             (SELECT username FROM users WHERE user_id = recipient_id) as recipient FROM messages 
             WHERE (sender_id = %s AND recipient_id = %s) OR

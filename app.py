@@ -60,7 +60,7 @@ def messages(username=None):
     active_contact = DatabaseManager.get_user(mysql, username)
     messages = DatabaseManager.get_messages(mysql, g.user['user_id'], username)
     files = DatabaseManager.get_files(mysql, g.user['user_id'], username)
-    print(files)
+    files = shorten_filename(files)
     return render_template('index.html', 
         title='Message',
         contacts=contacts,
@@ -69,6 +69,18 @@ def messages(username=None):
             'username': username},
         messages=messages,
         files_shared=files)
+
+def shorten_filename(files):
+    for _file in files:
+        new_file = convert_file_name(_file['file_name'])
+        file_name = new_file['filename']
+        if(len(file_name) > 15):
+            file_name = new_file['filename'][:13]
+            file_name = '{}...'.format(file_name)
+        file_name = '{}.{}'.format(file_name, new_file['file_ext'])
+        _file['file_name'] = file_name
+    
+    return files
 
 @app.route('/')
 def index():
@@ -117,11 +129,17 @@ def server_add_contact():
     DatabaseManager.add_contact(mysql, g.user['user_id'], username)
     return "0"
 
-@app.route('/server/upload', methods=['POST'])
-def server_upload():
-    relative_path = 'static\\shared_files\\'
-    target = os.path.join(APP_ROOT, relative_path)
+# @app.route('/server/upload', methods=['POST'])
+# def server_upload():
+#     relative_path = 'static\\shared_files\\'
+#     target = os.path.join(APP_ROOT, relative_path)
 
+#     sent_file = request.files['fileInput']
+#     save_file(sent_file)
+
+#     return redirect('./messages/{}'.format(recipient))
+
+def save_file(sent_file):
     sent_file = request.files['fileInput']
     sender = g.user['user_id']
     recipient = request.form['recipient']
@@ -140,8 +158,6 @@ def server_upload():
             new_filename['file_ext']
         )
         sent_file.save(destination)
-
-    return redirect('./messages/{}'.format(recipient))
 
 def convert_file_name(filename):
     split_filename = filename.split('.')

@@ -1,5 +1,4 @@
 $(function() {
-
     let socket = io.connect('http://localhost:5000')
 
     let messageForm = $('#message-form')
@@ -8,6 +7,13 @@ $(function() {
     let senderBox = $('#message-box-sender')
     let fileForm = $('#file-form')
     let fileInput = $('#file-input')
+    let message_container = $('.message')
+
+    to_bottom()
+
+    fileForm.on('change', function() {
+        $(this)[0].submit()
+    })
 
     socket.on('connect', function() {
         if(senderBox.val() === undefined) return
@@ -15,7 +21,10 @@ $(function() {
     })
 
     socket.on('send message', function(message) {
-        $('.thread').append('<p><strong>' + message['sender'] + ': </strong>' + message['message'] + '</p>')
+        message_container.append(
+            '<li class="message-bubble message-bubble-recieved">' + message['message'] + '</li>'
+        )
+        to_bottom()
     })
 
     $('#login-form').submit(function(e) {
@@ -65,13 +74,13 @@ $(function() {
             'message': message,
             'recipient': recipient
         })
-        $('.thread').append('<p><strong>' + sender + ': </strong>' + message + '</p>')
+        $('.message').append('<li class="message-bubble message-bubble-sent">' + message + '</li>')
+        to_bottom()
     })
 
-    // fileForm.submit(function(e) {
-    //     e.preventDefault()
-    //     socket.emit('new file', fileInput.val())
-    // })
+    function to_bottom() {
+        message_container[0].scrollTop = message_container[0].scrollHeight - message_container[0].clientHeight
+    }
 
     function search_user(query) {
         $.ajax({
