@@ -1,4 +1,5 @@
 class DatabaseManager:
+    
     def login(mysql, username, password):
         cur = mysql.connection.cursor()
         sql_query = '''SELECT user_id, username, first_name, last_name FROM users WHERE 
