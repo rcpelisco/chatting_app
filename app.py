@@ -2,7 +2,7 @@ from flask import Flask , session, render_template, request, redirect, g, url_fo
 from flask_mysqldb import MySQL
 from flask_socketio import SocketIO, emit
 from DatabaseManager import *
-import json, os
+import json, os, random, datetime
 
 app = Flask(__name__)
 
@@ -73,9 +73,9 @@ def messages(username=None):
 def shorten_filename(files):
     for _file in files:
         new_file = convert_file_name(_file['file_name'])
-        file_name = new_file['filename']
+        file_name = new_file['old_filename']
         if(len(file_name) > 15):
-            file_name = new_file['filename'][:13]
+            file_name = new_file['old_filename'][:13]
             file_name = '{}...'.format(file_name)
         file_name = '{}.{}'.format(file_name, new_file['file_ext'])
         _file['file_name'] = file_name
@@ -108,8 +108,7 @@ def server_login():
     result = DatabaseManager.login(mysql, username, password)
     if len(result) > 0:
         session['user'] = result[0]
-        return json.dumps(result[0])
-    return 'false'
+    return redirect('/')
 
 @app.route('/server/register', methods=['POST'])
 def server_register():
@@ -129,41 +128,45 @@ def server_add_contact():
     DatabaseManager.add_contact(mysql, g.user['user_id'], username)
     return "0"
 
-# @app.route('/server/upload', methods=['POST'])
-# def server_upload():
-#     relative_path = 'static\\shared_files\\'
-#     target = os.path.join(APP_ROOT, relative_path)
+@app.route('/server/upload', methods=['POST'])
+def server_upload():
 
-#     sent_file = request.files['fileInput']
-#     save_file(sent_file)
-
-#     return redirect('./messages/{}'.format(recipient))
-
-def save_file(sent_file):
-    sent_file = request.files['fileInput']
     sender = g.user['user_id']
     recipient = request.form['recipient']
+    sent_file = request.files['fileInput']
+    save_file(sent_file)
+
+    return redirect('./messages/{}'.format(recipient))
+
+def save_file(sent_file):
+    relative_path = 'static\\shared_files\\'
+    target = os.path.join(APP_ROOT, relative_path)
+    
     if(sent_file != ''):
         new_filename = convert_file_name(sent_file.filename)
-        last_id = DatabaseManager.save_file(
-            mysql, 
-            new_filename,
-            sender,
-            recipient
-        )
-        destination = '{}{}-{}.{}'.format(
+        print(new_filename)
+
+        # DatabaseManager.save_file(mysql, new_filename, sender, recipient)
+        destination = '{}{}.{}'.format(
             target,
-            new_filename['filename'], 
-            last_id, 
+            new_filename['new_filename'], 
             new_filename['file_ext']
         )
+        print('destination: ')
+        print(destination)
+        return 
         sent_file.save(destination)
 
 def convert_file_name(filename):
-    split_filename = filename.split('.')
-    new_filename = {'filename': split_filename[0], 'file_ext': split_filename[1]}
-    return new_filename
-
+    rand_no = random.randint(100, 1001)
+    filename, extension = os.path.splitext(filename)
+    date = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+    new_filename = "{}-{}".format(rand_no, date)
+    new_file = {'old_filename': filename, 
+        'new_filename': new_filename, 
+        'file_ext': extension
+    }
+    return new_file
 
 @app.route('/server/download')
 def server_download():

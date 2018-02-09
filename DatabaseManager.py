@@ -19,9 +19,9 @@ class DatabaseManager:
     def search(mysql, user_id, user_query):
         cur = mysql.connection.cursor()
         sql_query = '''SELECT username, first_name, last_name FROM users WHERE 
-            first_name LIKE %s OR last_name LIKE %s OR username LIKE %s ORDER BY 
+            (first_name LIKE %s OR last_name LIKE %s OR username LIKE %s) AND NOT user_id = %s ORDER BY 
             first_name, last_name'''
-        cur.execute(sql_query, [user_query + '%', user_query + '%', user_query + '%'])
+        cur.execute(sql_query, [user_query + '%', user_query + '%', user_query + '%', user_id])
         results = list(cur.fetchall())
         print(results)
         for result in results:
@@ -99,14 +99,10 @@ class DatabaseManager:
         cur = mysql.connection.cursor()
         other_contact = DatabaseManager.get_user_id(mysql, recipient)
         sql_query = '''INSERT INTO files (file_name, file_path, sender_id, recipient_id) 
-            SELECT %s, concat(%s, '-', MAX(file_id) + 1, '.', %s), %s, %s FROM files'''
-        cur.execute(sql_query, ['.'.join([file_name['filename'], file_name['file_ext']]), 
-            file_name['filename'], file_name['file_ext'], sender, other_contact])
+            SELECT %s, %s, %s, %s FROM files'''
+        cur.execute(sql_query, ['.'.join([file_name['old_filename'], file_name['file_ext']]), 
+            '.'.joind(file_name['new_filename'], file_name['file_ext']), sender, other_contact])
         mysql.connection.commit()
-        sql_query = '''SELECT LAST_INSERT_ID() as id FROM files LIMIT 1'''
-        cur.execute(sql_query)
-        id = list(cur.fetchall())
-        return str(id[0]['id'])
 
     def get_files(mysql, user_id, username):
         cur = mysql.connection.cursor()
