@@ -38,6 +38,8 @@
                         {% if user.user_id == message.sender_id%}
                         <li class="message-bubble message-bubble-sent">
                             {{ message.message }}
+                            <br>
+                            <small> {{ message.created_on }}</small>
                         </li>
                         {% else %}
                         <li class="message-bubble message-bubble-recieved">

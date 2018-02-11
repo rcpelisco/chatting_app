@@ -18,17 +18,7 @@ socketio = SocketIO(app)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
-dummy_contacts = [
-    {
-        'contact_name': 'Jane', 
-        'time_last_message': 
-        '1 min', 'last_message': 'I was down. My dreams were wearing thin ...', 
-        'is_active': 'active'
-    },
-]
-
 online = {
-
 }
 
 @app.before_request

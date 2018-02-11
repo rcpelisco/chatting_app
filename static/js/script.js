@@ -74,9 +74,23 @@ $(function() {
             'message': message,
             'recipient': recipient
         })
-        $('.message').append('<li class="message-bubble message-bubble-sent">' + message + '</li>')
+        console.log(get_current_date_time())
+        $('.message').append('<li class="message-bubble message-bubble-sent">' + 
+            message + '<br>' +
+            '<small>' + (get_current_date_time().toString()) + '</small>' +
+            '</li>')
         to_bottom()
     })
+
+    function get_current_date_time() {
+        let date = new Date()
+        return date.getFullYear() + '-' +
+            (date.getMonth()+1) + '-' +
+            date.getDate() + ' ' +
+            date.getHours() + ':' +
+            date.getMinutes() + ':' +
+            date.getSeconds()
+    }
 
     function to_bottom() {
         message_container[0].scrollTop = message_container[0].scrollHeight - message_container[0].clientHeight
@@ -139,5 +153,11 @@ $(function() {
             add_user(username)
         })
     }
-})
 
+    function refresh() {
+        console.log('refresh')
+    }
+
+    setInterval(refresh(), 1000)
+    
+})
