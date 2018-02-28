@@ -124,27 +124,24 @@ def server_upload():
     sender = g.user['user_id']
     recipient = request.form['recipient']
     sent_file = request.files['fileInput']
-    save_file(sent_file)
+    save_file(sent_file, sender, recipient)
 
     return redirect('./messages/{}'.format(recipient))
 
-def save_file(sent_file):
+def save_file(sent_file, sender, recipient):
     relative_path = 'static\\shared_files\\'
     target = os.path.join(APP_ROOT, relative_path)
     
     if(sent_file != ''):
         new_filename = convert_file_name(sent_file.filename)
-        print(new_filename)
 
-        # DatabaseManager.save_file(mysql, new_filename, sender, recipient)
-        destination = '{}{}.{}'.format(
+        DatabaseManager.save_file(mysql, new_filename, sender, recipient)
+        destination = '{}{}{}'.format(
             target,
             new_filename['new_filename'], 
             new_filename['file_ext']
         )
-        print('destination: ')
-        print(destination)
-        return 
+        print('destination: ', destination)
         sent_file.save(destination)
 
 def convert_file_name(filename):
@@ -169,7 +166,6 @@ def server_download():
 
 @socketio.on('new message')
 def handle_message(msg):
-    print(msg)
     if(msg['recipient'] in online):
         recipient_sid = online[msg['recipient']]
         socketio.emit('send message', msg, room=recipient_sid)        
@@ -191,20 +187,11 @@ def handle_online(data):
 @socketio.on('update username sid')
 def update_username_sid(username):
     online[username] = request.sid
-    print('update username sid')
-    print(online)
+    print('update username sid', online)
 
 @socketio.on('logout')
 def handle_logout(username):
     online.pop(username)
-    print('logout')
-    print(online)
-
-def remove_user(d, key):
-    r = dict(d)
-    print(r)
-    del r[key]
-    return r
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)

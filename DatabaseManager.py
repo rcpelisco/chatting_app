@@ -95,13 +95,15 @@ class DatabaseManager:
         messages = list(cur.fetchall()) 
         return messages
 
-    def save_file(mysql, file_name, sender, recipient):
+    def save_file(mysql, file_info, sender, recipient):
         cur = mysql.connection.cursor()
         other_contact = DatabaseManager.get_user_id(mysql, recipient)
         sql_query = '''INSERT INTO files (file_name, file_path, sender_id, recipient_id) 
-            SELECT %s, %s, %s, %s FROM files'''
-        cur.execute(sql_query, ['.'.join([file_name['old_filename'], file_name['file_ext']]), 
-            '.'.joind(file_name['new_filename'], file_name['file_ext']), sender, other_contact])
+            VALUES (%s, %s, %s, %s)'''
+        print(sql_query)
+        file_name = file_info['old_filename'] + file_info['file_ext']
+        file_path = file_info['new_filename'] + file_info['file_ext']
+        cur.execute(sql_query, [file_name, file_path, sender, other_contact])
         mysql.connection.commit()
 
     def get_files(mysql, user_id, username):
